@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import configuration from './config/configuration';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import databaseConfig from './config/database-config';
 
 @Module({
   imports: [
@@ -11,7 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       isGlobal: true,
       load: [configuration],
     }),
-    TypeOrmModule.forRoot({ "autoLoadEntities": true }),
+    TypeOrmModule.forRoot({ ...databaseConfig, "autoLoadEntities": true }),
 ],
   controllers: [AppController],
   providers: [AppService],

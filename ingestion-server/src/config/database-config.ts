@@ -31,7 +31,7 @@ const databaseConfig: DataSourceOptions = {
     port: Number(port),
     database,
     username,
-    password,
+    password: password ?? 'test_db_password',
     synchronize: false,
     type: "postgres",
     poolSize: poolMax,

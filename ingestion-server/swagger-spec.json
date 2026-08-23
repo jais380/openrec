@@ -1,0 +1,1 @@
+{"openapi":"3.0.0","paths":{"/":{"get":{"operationId":"getHello","parameters":[],"responses":{"200":{"description":""}},"tags":["App"]}}},"info":{"title":"OpenRec Ingestion-Server","description":"","version":"1.0","contact":{}},"tags":[],"servers":[{"url":"http://localhost:4002","description":"Local Ingestion Server"}],"components":{"schemas":{}}}
