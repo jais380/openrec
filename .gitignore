@@ -12,6 +12,7 @@ training-cli/*.pyc
 *.db
 *.sqlite3
 .env
+.env.development
 .DS_Store
 
 # Logs

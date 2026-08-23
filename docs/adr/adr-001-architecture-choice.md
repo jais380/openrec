@@ -1,7 +1,7 @@
 # ADR 001: Selection of RESTful Hybrid Architecture over Shared Database Access
 
 * **Status:** Accepted
-* **Date:** 2026-08-02
+* **Date:** 2026-18-02
 * **Deciders:** Jude (Lead Engineer)
 * **Technical Domain:** System Architecture / Synchronization Protocols
 
