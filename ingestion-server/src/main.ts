@@ -6,9 +6,10 @@ import { ClassSerializerInterceptor, Logger } from '@nestjs/common';
 import {
   DocumentBuilder,
   SwaggerDocumentOptions,
-  SwaggerModule
-} from '@nestjs/swagger'
-import * as fs from 'fs'
+  SwaggerModule,
+} from '@nestjs/swagger';
+import * as fs from 'fs';
+import { Response } from 'express';
 
 function getAllowedCorsOrigin() {
   const configuredOrigins = (process.env.CORS_ORIGINS ?? '')
@@ -16,14 +17,15 @@ function getAllowedCorsOrigin() {
     .map((origin) => origin.trim())
     .filter(Boolean);
 
-    return configuredOrigins;
+  return configuredOrigins;
 }
 
 function isLoopbackOrigin(origin: string) {
   try {
     const parsed = new URL(origin);
     return ['localhost', '127.0.0.1', '[::1]'].includes(parsed.hostname);
-  } catch(error) {
+  } catch (error) {
+    Logger.error(`loobackOrginError: ${error}`);
     return false;
   }
 }
@@ -32,6 +34,7 @@ function getCommitHash(): string | null {
   try {
     return execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
   } catch (error) {
+    Logger.error(`getCommitHashError: ${error}`);
     return null;
   }
 }
@@ -43,7 +46,7 @@ async function bootstrap() {
     // Don't exit immediately, let the app try to recover
   });
 
-  process.on('unhandledRejection', (reason, promise) => {
+  process.on('unhandledRejection', (reason) => {
     Logger.error('Unhandled Rejection', String(reason), 'Bootstrap');
     // Don't exit immediately, let the app try to recover
   });
@@ -65,17 +68,13 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
 
-  const document = SwaggerModule.createDocument(
-    app as Parameters<typeof SwaggerModule.createDocument>[0],
-    config,
-    options,
-  );
-  if(process.env.GENERATE_DOCS === 'true') {
-    fs.writeFileSync('./swagger-spec.json', JSON.stringify(document))
+  const document = SwaggerModule.createDocument(app, config, options);
+  if (process.env.GENERATE_DOCS === 'true') {
+    fs.writeFileSync('./swagger-spec.json', JSON.stringify(document));
   }
-  SwaggerModule.setup('docs', app as Parameters<typeof SwaggerModule.createDocument>[0], document);
+  SwaggerModule.setup('docs', app, document);
 
-  app.getHttpAdapter().get('/openapi.json', (_, res) => {
+  app.getHttpAdapter().get('/openapi.json', (_, res: Response) => {
     res.type('application/json').send(JSON.stringify(document));
   });
   app.useGlobalInterceptors(
@@ -85,14 +84,17 @@ async function bootstrap() {
     }),
   );
   app.enableCors({
-    origin: (requestOrgin: string, callback: (err: null, bool: Boolean) => void) => {
-      if(!requestOrgin) {
+    origin: (
+      requestOrgin: string,
+      callback: (err: null, bool: boolean) => void,
+    ) => {
+      if (!requestOrgin) {
         callback(null, true);
         return;
       }
 
       const allowedOrigins = getAllowedCorsOrigin();
-      if(
+      if (
         allowedOrigins.includes(requestOrgin) ||
         isLoopbackOrigin(requestOrgin)
       ) {
@@ -100,12 +102,12 @@ async function bootstrap() {
         return;
       }
 
-      callback(null, false)
+      callback(null, false);
     },
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Accept, Authorization',
-  })
+  });
 
   await app.listen(Number.parseInt(process.env.PORT ?? '4002'));
 
@@ -116,4 +118,4 @@ async function bootstrap() {
     Logger.log(`Server running on ${process.env.PORT}`);
   }
 }
-bootstrap();
+void bootstrap();

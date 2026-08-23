@@ -12,8 +12,8 @@ import databaseConfig from './config/database-config';
       isGlobal: true,
       load: [configuration],
     }),
-    TypeOrmModule.forRoot({ ...databaseConfig, "autoLoadEntities": true }),
-],
+    TypeOrmModule.forRoot({ ...databaseConfig, autoLoadEntities: true }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
