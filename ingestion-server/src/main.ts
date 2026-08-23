@@ -70,10 +70,10 @@ async function bootstrap() {
     config,
     options,
   );
-  if(process.env.GENERATE_DOCS) {
+  if(process.env.GENERATE_DOCS === 'true') {
     fs.writeFileSync('./swagger-spec.json', JSON.stringify(document))
   }
-  SwaggerModule.setup('api', app as Parameters<typeof SwaggerModule.createDocument>[0], document);
+  SwaggerModule.setup('docs', app as Parameters<typeof SwaggerModule.createDocument>[0], document);
 
   app.getHttpAdapter().get('/openapi.json', (_, res) => {
     res.type('application/json').send(JSON.stringify(document));
