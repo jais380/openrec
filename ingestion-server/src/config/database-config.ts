@@ -43,7 +43,7 @@ const databaseConfig: DataSourceOptions = {
     min: 1,
     idleTimeoutMillis: 30000,
   },
-  entities: [isProd ? 'dist/entities/*.js' : 'src/entities/*.ts'],
+  entities: [],
   migrations: [isProd ? 'dist/migrations/*.js' : 'src/migrations/*.{js,ts}'],
 };
 
