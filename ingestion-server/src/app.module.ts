@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import configuration from './config/configuration';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import databaseConfig from './config/database-config';
+import { EventModule } from './modules/events/events.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import databaseConfig from './config/database-config';
       load: [configuration],
     }),
     TypeOrmModule.forRoot({ ...databaseConfig, autoLoadEntities: true }),
+    EventModule
   ],
   controllers: [AppController],
   providers: [AppService],
