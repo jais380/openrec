@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { InteractionEventType } from "src/utils/enums";
+import { InteractionEventType } from "../../utils/enums";
 import z from "zod";
 
 // SINGLE EVENT DATA

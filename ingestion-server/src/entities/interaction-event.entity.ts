@@ -1,4 +1,4 @@
-import { InteractionEventType } from "src/utils/enums";
+import { InteractionEventType } from "../utils/enums";
 import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('interaction_events')

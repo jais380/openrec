@@ -1,11 +1,11 @@
 import { Body, Controller, Post, UsePipes } from "@nestjs/common";
 import { ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
-import { ZodValidationPipe } from "src/utils/zod.validation";
+import { ZodValidationPipe } from "../../utils/zod.validation";
 import { CreateInteractionEventBatchType, CreateInteractionEventResponse, createInteractionEventBatchSchema } from "./events.dto";
 import { InteractionEventService } from "./events.service";
 
 @ApiTags('Interaction-Event')
-@Controller('interation-event')
+@Controller('api/events')
 export class InteractionEventController {
     constructor(
         private readonly eventService: InteractionEventService
