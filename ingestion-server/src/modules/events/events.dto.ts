@@ -57,7 +57,7 @@ export class CreateInteractionEventDTO implements CreateInteractionEventType {
     interactionValue!: number;
 
     @ApiProperty({
-        type: Date,
+        type: () => Date,
         required: false,
         description: 'The timestamp for the created event - DB autocreates if not provided',
         example: '2026-06-07T14:30:00.000Z'
@@ -66,11 +66,24 @@ export class CreateInteractionEventDTO implements CreateInteractionEventType {
 }
 
 // BATCH EVENT DATA
+export const createInteractionEventBatchOnlySchema = z.array(createInteractionEventSchema).min(1).max(500); // Cap batch size
+
+export type CreateInteractionEventBatchOnlyType = z.infer<typeof createInteractionEventBatchOnlySchema>;
+
 export const createInteractionEventBatchSchema = z.union([
     createInteractionEventSchema,
-    z.array(createInteractionEventSchema).min(1).max(500) // Cap batch size
+    createInteractionEventBatchOnlySchema
 ]);
 
 export type CreateInteractionEventBatchType = z.infer<typeof createInteractionEventBatchSchema>;
 
-export const CreateInteractionEventBatchDTO: CreateInteractionEventBatchType = new CreateInteractionEventDTO || [new CreateInteractionEventDTO];
+// Event Response
+export class CreateInteractionEventResponse extends CreateInteractionEventDTO {
+    @ApiProperty({
+        type: 'string',
+        required: true,
+        description: 'Unique UUID of the interaction event entity',
+        example: '9ds47f64-5717-4562-b3fc-2c963f66kjn5'
+    })
+    id!: string;
+}
