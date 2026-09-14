@@ -1,14 +1,14 @@
 import { Controller, Get, Query, UsePipes } from "@nestjs/common";
-import { SyncService } from "./sync.service";
+import { DeltaSyncService } from "./delta-sync.service";
 import { ZodValidationPipe } from "src/utils/zod.validation";
-import { DeltaSyncDTO, deltaSyncSchema } from "./sync.dto";
+import { DeltaSyncDTO, deltaSyncSchema } from "./delta-sync.dto";
 import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { InteractionEventResponse } from "../events/events.dto";
 
 @Controller('api/sync')
-export class SyncController {
+export class DeltaSyncController {
     constructor(
-        private readonly syncService: SyncService
+        private readonly syncService: DeltaSyncService
     ) {}
 
     @Get('delta')

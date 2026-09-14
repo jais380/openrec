@@ -15,9 +15,6 @@ describe('EventService', () => {
     let eventRepo: Repository<InteractionEvent>;
     let recommendationRepo: Repository<RecommendationPrediction>;
 
-    let interactionEvent: InteractionEvent;
-    let recommendationPrediction: RecommendationPrediction;
-
     beforeAll(async () => {
         testModule = await Test.createTestingModule({
             imports: [
