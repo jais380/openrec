@@ -1,7 +1,7 @@
 import { Body, Controller, Post, UsePipes } from "@nestjs/common";
 import { ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ZodValidationPipe } from "../../utils/zod.validation";
-import { CreateInteractionEventBatchType, CreateInteractionEventResponse, createInteractionEventBatchSchema } from "./events.dto";
+import { CreateInteractionEventBatchType, InteractionEventResponse, createInteractionEventBatchSchema } from "./events.dto";
 import { InteractionEventService } from "./events.service";
 
 @ApiTags('Interaction-Event')
@@ -19,7 +19,7 @@ export class InteractionEventController {
     })
     @ApiOkResponse({
         description: 'Event Created successfully',
-        type: () => [CreateInteractionEventResponse]
+        type: () => [InteractionEventResponse]
     })
     @ApiBadRequestResponse({
         description: 'Bad Request'

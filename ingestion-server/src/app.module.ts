@@ -6,6 +6,7 @@ import configuration from './config/configuration';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import databaseConfig from './config/database-config';
 import { InteractionEventModule } from './modules/events/events.module';
+import { SyncModule } from './modules/sync/sync.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { InteractionEventModule } from './modules/events/events.module';
     }),
     TypeOrmModule.forRoot({ ...databaseConfig, autoLoadEntities: true }),
     InteractionEventModule,
+    SyncModule,
   ],
   controllers: [AppController],
   providers: [AppService],

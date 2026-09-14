@@ -1,9 +1,10 @@
 import { InteractionEventType } from "../utils/enums";
-import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('interaction_events')
 @Index(['projectId', 'userId'])
-@Index(['timestamp'])
+@Index(['createdAt'])
+@Index(['modifiedAt'])
 export class InteractionEvent {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
@@ -27,6 +28,12 @@ export class InteractionEvent {
     @Column({ name: 'interaction_value', type: 'float', default: 1.0 })
     interactionValue!: number;
 
-    @CreateDateColumn({ type: 'timestamptz' })
-    timestamp!: Date;
+    @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+    createdAt!: Date;
+
+    @UpdateDateColumn({ name: 'modified_at', type: 'timestamptz' })
+    modifiedAt!: Date;
+
+    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz' })
+    deletedAt!: Date;
 }

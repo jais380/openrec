@@ -78,7 +78,7 @@ export const createInteractionEventBatchSchema = z.union([
 export type CreateInteractionEventBatchType = z.infer<typeof createInteractionEventBatchSchema>;
 
 // Event Response
-export class CreateInteractionEventResponse extends CreateInteractionEventDTO {
+export class InteractionEventResponse extends CreateInteractionEventDTO {
     @ApiProperty({
         type: 'string',
         required: true,
