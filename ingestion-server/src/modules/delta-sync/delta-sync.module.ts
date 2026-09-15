@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { InteractionEvent } from "src/entities/interaction-event.entity";
+import { InteractionEvent } from "../../entities/interaction-event.entity";
 import { DeltaSyncController } from "./delta-sync.controller";
 import { DeltaSyncService } from "./delta-sync.service";
 

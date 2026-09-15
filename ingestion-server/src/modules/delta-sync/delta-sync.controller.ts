@@ -1,6 +1,6 @@
 import { Controller, Get, Query, UsePipes } from "@nestjs/common";
 import { DeltaSyncService } from "./delta-sync.service";
-import { ZodValidationPipe } from "src/utils/zod.validation";
+import { ZodValidationPipe } from "../../utils/zod.validation";
 import { DeltaSyncDTO, deltaSyncSchema } from "./delta-sync.dto";
 import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { InteractionEventResponse } from "../events/events.dto";

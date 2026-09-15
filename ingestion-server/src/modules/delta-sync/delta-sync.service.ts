@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { InteractionEvent } from "src/entities/interaction-event.entity";
+import { InteractionEvent } from "../../entities/interaction-event.entity";
 import { Repository } from "typeorm";
 import { DeltaSyncDTO } from "./delta-sync.dto";
 

@@ -10,7 +10,6 @@ export const createInteractionEventSchema = z.object({
     itemId: z.string().trim().min(1),
     eventType: z.enum(InteractionEventType),
     interactionValue: z.coerce.number().min(1).max(5),
-    timestamp: z.date().optional()
 });
 
 type CreateInteractionEventType = z.infer<typeof createInteractionEventSchema>;
@@ -20,7 +19,7 @@ export class CreateInteractionEventDTO implements CreateInteractionEventType {
         type: 'string',
         required: true,
         description: 'Unique UUID of the project',
-        example: '4ua85f64-5717-4562-b3fc-2c963f66adb8'
+        example: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
     })
     projectId!: string;
 
@@ -55,14 +54,6 @@ export class CreateInteractionEventDTO implements CreateInteractionEventType {
         example: 5
     })
     interactionValue!: number;
-
-    @ApiProperty({
-        type: () => Date,
-        required: false,
-        description: 'The timestamp for the created event - DB autocreates if not provided',
-        example: '2026-06-07T14:30:00.000Z'
-    })
-    timestamp?: Date;
 }
 
 // BATCH EVENT DATA
@@ -86,4 +77,28 @@ export class InteractionEventResponse extends CreateInteractionEventDTO {
         example: '9ds47f64-5717-4562-b3fc-2c963f66kjn5'
     })
     id!: string;
+
+     @ApiProperty({
+        type: () => Date,
+        required: false,
+        description: 'The timestamp for the created event - DB autocreates',
+        example: '2026-06-07T14:30:00.000Z'
+    })
+    createdAt!: Date;
+
+     @ApiProperty({
+        type: () => Date,
+        required: false,
+        description: 'The timestamp for the modified event - DB autoupdates',
+        example: '2026-06-07T14:30:00.000Z'
+    })
+    modifiedAt!: Date;
+
+     @ApiProperty({
+        type: () => Date || null,
+        required: false,
+        description: 'The timestamp for the deleted event - is Default NULL till softDelete',
+        example: '2026-06-07T14:30:00.000Z'
+    })
+    deletedAt!: Date | null;
 }

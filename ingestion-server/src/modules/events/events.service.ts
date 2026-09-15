@@ -18,8 +18,7 @@ export class InteractionEventService {
                 userId: e.userId,
                 itemId: e.itemId,
                 eventType: e.eventType,
-                interactionValue: e.interactionValue,
-                ...(e.timestamp && {timestamp: e.timestamp})
+                interactionValue: e.interactionValue
             })
         });
 
