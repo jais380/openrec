@@ -22,7 +22,7 @@ export class DeltaSyncDTO implements DeltaSyncType {
         required: true,
         type: () => String,
         description: 'Unique UUID of the project the data belongs to',
-        example: 'a8b9c0d1-e2f3-4a5b-6c7d-8e9f0a1b2c3d'
+        example: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
     })
     projectId!: string;
 

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { InteractionEvent } from "../../entities/interaction-event.entity";
 import { Repository } from "typeorm";
-import { CreateInteractionEventBatchOnlyType } from "./events.dto";
+import { CreateInteractionEventBatchDTO } from "./events.dto";
 
 @Injectable()
 export class InteractionEventService {
@@ -11,8 +11,9 @@ export class InteractionEventService {
         private readonly eventRepo: Repository<InteractionEvent>
     ) {}
 
-    async createInteractionEvent(events: CreateInteractionEventBatchOnlyType) {
-        const results = events.map((e) => {
+    async createInteractionEvent(dto: CreateInteractionEventBatchDTO) {
+
+        const results = dto.events.map((e) => {
             return this.eventRepo.create({
                 projectId: e.projectId,
                 userId: e.userId,

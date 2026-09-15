@@ -12,7 +12,7 @@ export const createInteractionEventSchema = z.object({
     interactionValue: z.coerce.number().min(1).max(5),
 });
 
-type CreateInteractionEventType = z.infer<typeof createInteractionEventSchema>;
+export type CreateInteractionEventType = z.infer<typeof createInteractionEventSchema>;
 
 export class CreateInteractionEventDTO implements CreateInteractionEventType {
     @ApiProperty({
@@ -27,7 +27,7 @@ export class CreateInteractionEventDTO implements CreateInteractionEventType {
         type: 'string',
         required: true,
         description: 'Unique ID of the user',
-        example: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+        example: 'user-1'
     })
     userId!: string;
 
@@ -57,16 +57,20 @@ export class CreateInteractionEventDTO implements CreateInteractionEventType {
 }
 
 // BATCH EVENT DATA
-export const createInteractionEventBatchOnlySchema = z.array(createInteractionEventSchema).min(1).max(500); // Cap batch size
-
-export type CreateInteractionEventBatchOnlyType = z.infer<typeof createInteractionEventBatchOnlySchema>;
-
-export const createInteractionEventBatchSchema = z.union([
-    createInteractionEventSchema,
-    createInteractionEventBatchOnlySchema
-]);
+export const createInteractionEventBatchSchema = z.object({
+    events: z.array(createInteractionEventSchema).min(1).max(500) // Cap batch size
+});
 
 export type CreateInteractionEventBatchType = z.infer<typeof createInteractionEventBatchSchema>;
+
+export class CreateInteractionEventBatchDTO implements CreateInteractionEventBatchType {
+    @ApiProperty({
+        required: true,
+        type: () => [CreateInteractionEventDTO],
+        description: 'The batch list of Events'
+    })
+    events!: CreateInteractionEventDTO[]
+}
 
 // Event Response
 export class InteractionEventResponse extends CreateInteractionEventDTO {

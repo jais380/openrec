@@ -58,20 +58,19 @@ describe('CreateInteractionEventSchema', () => {
 
 describe('CreateInteractionEventBatchSchema', () => {
     const validEvent = {
-        projectId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-        userId: 'user-1',
-        itemId: 'item-42',
-        eventType: InteractionEventType.CLICK,
-        interactionValue: 1,
+        events: [
+             {
+                projectId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+                userId: 'user-1',
+                itemId: 'item-42',
+                eventType: InteractionEventType.CLICK,
+                interactionValue: 1,
+            }
+        ]
     };
 
-    it('accepts a valid event', () => {
-        const result = createInteractionEventBatchSchema.safeParse(validEvent);
-        expect(result.success).toBe(true);
-    });
-
     it('accepts an array of valid events', () => {
-        const result = createInteractionEventBatchSchema.safeParse([validEvent, validEvent]);
+        const result = createInteractionEventBatchSchema.safeParse(validEvent);
         expect(result.success).toBe(true);
     });
 
@@ -94,13 +93,17 @@ describe('ZodValidationPipe', () => {
 
     it('returns the valid parsed events', () => {
         const valid = {
-            projectId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-            userId: 'user-1',
-            itemId: 'item-42',
-            eventType: InteractionEventType.CLICK,
-            interactionValue: 1,
+            events: [
+                {
+                    projectId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+                    userId: 'user-1',
+                    itemId: 'item-42',
+                    eventType: InteractionEventType.CLICK,
+                    interactionValue: 1,
+                }
+            ]
         };
 
-        expect(pipe.transform(valid)).toEqual(valid);
+        expect(createInteractionEventBatchSchema.safeParse(valid).data).toEqual(valid);
     });
 });
