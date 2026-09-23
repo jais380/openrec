@@ -1,12 +1,12 @@
-import { Body, Controller, Post, Query, Req, UseGuards, UsePipes } from "@nestjs/common";
+import { Body, Controller, Post, Query, Req, UnauthorizedException, UseGuards, UsePipes } from "@nestjs/common";
 import { ApiBadRequestResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { ZodValidationPipe } from "../../utils/zod.validation";
 import { AuthService } from "./auth.service";
-import { GenerateTokenDTO, GenerateTokenResponseDTO, generateTokenSchema, RegisterDTO, RegisterResponseDTO, registerSchema } from "./auth.dto";
+import { GenerateTokenResponseDTO, generateTokenSchema, RegisterDTO, RegisterResponseDTO, registerSchema } from "./auth.dto";
 import { JwtAuthGuard } from "../../utils/jwt-auth.guard";
 import { AuthenticatedRequest } from "../../utils/jwt.strategy";
 
-@Controller('auth')
+@Controller('api/auth')
 export class AuthController {
     constructor(
         private readonly authService: AuthService
@@ -29,7 +29,6 @@ export class AuthController {
     }
 
     @Post('token')
-    @UsePipes(new ZodValidationPipe(generateTokenSchema))
     @ApiOperation({
         summary: 'Generate JWT token with APIKEY and APISECRET',
     })
@@ -40,7 +39,12 @@ export class AuthController {
     @ApiBadRequestResponse({
         description: "Bad Request"
     })
-    async generateToken(@Query() dto: GenerateTokenDTO) {
+    async generateToken(@Req() req: AuthenticatedRequest) {
+        if(!req.header('x-api-key') && !req.header('x-api-secret')) {
+            throw new UnauthorizedException("Access Denied");
+        }
+
+        const dto = { apiKey: req.header('x-api-key'), apiSecret: req.header('x-api-secret') }
         return await this.authService.generateToken(dto);
     }
 
