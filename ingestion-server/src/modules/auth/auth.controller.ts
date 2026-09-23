@@ -19,7 +19,9 @@ export class AuthController {
         description: "User Registered Successfully",
         type: RegisterResponseDTO
     })
-    @ApiBadRequestResponse()
+    @ApiBadRequestResponse({
+        description: "Bad Request"
+    })
     async register(dto: RegisterDTO) {
         return await this.authService.register(dto);
     }
@@ -33,7 +35,9 @@ export class AuthController {
         description: "Token Generated Successfully",
         type: GenerateTokenResponseDTO
     })
-    @ApiBadRequestResponse()
+    @ApiBadRequestResponse({
+        description: "Bad Request"
+    })
     async generateToken(dto: GenerateTokenDTO) {
         return await this.authService.generateToken(dto);
     }

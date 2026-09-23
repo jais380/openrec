@@ -4,7 +4,7 @@ import { User } from "src/entities/users.entity";
 import { Repository } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
 import { GenerateTokenDTO, RegisterDTO } from "./auth.dto";
-import { hashPassword } from "src/utils/helper";
+import { compareData, generateApiCredentials, hashData } from "src/utils/helper";
 
 @Injectable()
 export class AuthService {
@@ -37,20 +37,47 @@ export class AuthService {
             )
         }
 
-        const passwordHash = await hashPassword(password);
+        const saltRounds = 10;
+        const { apiKey, apiSecret } = generateApiCredentials();
+
+        const apiSecretHash = await hashData(apiSecret, saltRounds);
+        const passwordHash = await hashData(password, saltRounds);
 
         const user =  this.user.create({
             username,
             email,
             passwordHash,
+            apiKey,
+            apiSecretHash
         });
 
         await this.user.save(user);
+
+        return {
+            message: "User Registered Successfully",
+            warning: "Api Secret is shown only once - it is not saved in the database",
+            data: { apiKey, apiSecret },
+        }
     }
 
     async generateToken(dto: GenerateTokenDTO) {
-        const token = this.jwtService.sign(dto);
+        const { apiKey, apiSecret } = dto;
 
-        return { token };
+        const user = await this.user.findOneBy({ apiKey });
+        if(!user) {
+            throw new BadRequestException("Invalid Credentials");
+        }
+
+        const isMatch = await compareData(apiSecret, user.apiSecretHash);
+        if(!isMatch) {
+            throw new BadRequestException("Invalid Credentials");
+        }
+
+        const token = this.jwtService.sign(user.id);
+
+        return {
+            message: 'Token Generated Successfully',
+            data: { token },
+        };
     }
 }

@@ -1,15 +1,20 @@
 import bcrypt from "bcryptjs";
 import crypto from "node:crypto";
 
-export async function hashPassword(password: string) {
-    return await bcrypt.hash(password, 10);
+export async function hashData(password: string, saltRounds: number) {
+    return await bcrypt.hash(password, saltRounds);
 }
 
-export async function comparePassword(password: string, hashedPassword: string) {
+export async function compareData(password: string, hashedPassword: string) {
     return await bcrypt.compare(password, hashedPassword);
 }
 
 export function generateApiCredentials() {
     const randomKeyBytes = crypto.randomBytes(32).toString('hex');
-    const apiKey = ``
+    const apiKey = `ingest_apk_${randomKeyBytes}`;
+
+    const randomSecretBytes = crypto.randomBytes(32).toString('hex');
+    const apiSecret = `ingest_asec_${randomSecretBytes}`;
+
+    return { apiKey, apiSecret };
 }
