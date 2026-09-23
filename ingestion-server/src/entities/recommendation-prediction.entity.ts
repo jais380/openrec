@@ -2,7 +2,7 @@ import { Column, Entity, Index, PrimaryGeneratedColumn, UpdateDateColumn } from 
 
 export interface RecommendedType {
     itemId: string,
-    score: number
+    score?: number
 }
 
 @Entity('recommendation_predictions')
@@ -19,7 +19,7 @@ export class RecommendationPrediction {
     userId!: string;
 
     @Column({ name: 'recommended_item_ids', type: 'jsonb', nullable: false })
-    recommendedItemIds!: RecommendedType[] | string[];
+    recommendedItemIds!: RecommendedType[];
 
     @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
     updatedAt!: Date;

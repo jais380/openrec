@@ -8,6 +8,7 @@ import databaseConfig from './config/database-config';
 import { InteractionEventModule } from './modules/events/events.module';
 import { DeltaSyncModule } from './modules/delta-sync/delta-sync.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { RecommendationModule } from './modules/recommendation/recommendation.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AuthModule } from './modules/auth/auth.module';
     AuthModule,
     InteractionEventModule,
     DeltaSyncModule,
+    RecommendationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
