@@ -1,11 +1,14 @@
-import { Controller, Get, Query, UsePipes } from "@nestjs/common";
+import { Controller, Get, Query, UseGuards, UsePipes } from "@nestjs/common";
 import { DeltaSyncService } from "./delta-sync.service";
 import { ZodValidationPipe } from "../../utils/zod.validation";
 import { DeltaSyncDTO, deltaSyncSchema } from "./delta-sync.dto";
-import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { InteractionEventResponse } from "../events/events.dto";
+import { JwtAuthGuard } from "../../utils/jwt-auth.guard";
 
+@ApiTags('Delta Sync')
 @Controller('api/sync')
+@UseGuards(JwtAuthGuard)
 export class DeltaSyncController {
     constructor(
         private readonly syncService: DeltaSyncService

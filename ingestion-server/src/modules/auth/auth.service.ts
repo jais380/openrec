@@ -73,11 +73,34 @@ export class AuthService {
             throw new BadRequestException("Invalid Credentials");
         }
 
-        const token = this.jwtService.sign(user.id);
+        const token = this.jwtService.sign({ id: user.id });
 
         return {
             message: 'Token Generated Successfully',
             data: { token },
         };
+    }
+
+    async regenerateKeys(userId: string) {
+        const user = await this.user.findOneBy({ id: userId });
+
+        if(!user) {
+            throw new BadRequestException("Invalid Session");
+        }
+
+        const { apiKey, apiSecret } = generateApiCredentials();
+
+        const saltRounds = 10;
+        const apiSecretHash = await hashData(apiSecret, saltRounds);
+
+        user.apiKey = apiKey;
+        user.apiSecretHash = apiSecretHash;
+        await this.user.save(user);
+
+        return {
+            message: "Keys Regenerated Successfully",
+            warning: "Api Secret is shown only once - it is not saved in the database",
+            data: { apiKey, apiSecret },
+        }
     }
 }

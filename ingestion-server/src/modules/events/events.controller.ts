@@ -1,11 +1,13 @@
-import { Body, Controller, Post, UsePipes } from "@nestjs/common";
+import { Body, Controller, Post, UseGuards, UsePipes } from "@nestjs/common";
 import { ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ZodValidationPipe } from "../../utils/zod.validation";
 import { CreateInteractionEventBatchDTO, InteractionEventResponse, createInteractionEventBatchSchema } from "./events.dto";
 import { InteractionEventService } from "./events.service";
+import { JwtAuthGuard } from "../../utils/jwt-auth.guard";
 
-@ApiTags('Interaction-Event')
+@ApiTags('Interaction Event')
 @Controller('api/events')
+@UseGuards(JwtAuthGuard)
 export class InteractionEventController {
     constructor(
         private readonly eventService: InteractionEventService
