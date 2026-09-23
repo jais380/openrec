@@ -69,7 +69,7 @@ describe('DeltaSyncService', () => {
             })
         });
 
-        events = await eventRepo.save(results);
+        await eventRepo.save(results);
     }
 
     describe('Delta Sync', () => {
