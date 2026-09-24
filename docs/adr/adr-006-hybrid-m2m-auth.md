@@ -9,7 +9,7 @@
 
 ## Context and Problem Statement
 
-The OpenRec system exposes machine-to-machine (M2M) endpoints for high-throughput ingestion (`POST /api/events`), bulk recommendation persistence (`POST /api/recommendations/bulk`)[cite: 1], and real-time retrieval (`GET /api/recommendations/:userId`). These endpoints must be protected against unauthorized access.
+The OpenRec system exposes machine-to-machine (M2M) endpoints for high-throughput ingestion (`POST /api/events`), bulk recommendation persistence (`POST /api/recommendations/bulk`), and real-time retrieval (`GET /api/recommendations/:userId`). These endpoints must be protected against unauthorized access.
 
 M2M consumers include both client backend servers and the offline Python CLI engine. Standard user-facing authentication (session cookies or OAuth redirect flows) is unsuitable for CLI and automated service workflows.
 
