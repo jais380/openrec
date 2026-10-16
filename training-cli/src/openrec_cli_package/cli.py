@@ -1,4 +1,5 @@
 import typer
+from openrec_cli_package.db import init_db
 
 app = typer.Typer(help="openrec training CLI")
 
@@ -23,3 +24,11 @@ def push(
 ):
     """Push generated recommendations to the server"""
     typer.echo(f"Pushing project {project_id}")
+
+@app.command()
+def init(
+    db_path: str = typer.Option("openrec.db", help="Path to the local SQLite file")
+):
+    """Create the local SQLite database and tables"""
+    init_db(db_path)
+    typer.echo(f"Initialized database at {db_path}")
