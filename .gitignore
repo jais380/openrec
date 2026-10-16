@@ -6,10 +6,15 @@ ingestion-server/build
 # Python dependencies & virtual environments
 training-cli/.venv/
 training-cli/__pycache__/
+training-cli/src/openrec_cli_package/__pycache__/
+training-cli/tests/__pycache__/
+training-cli/src/openrec_cli_package/*.db
 training-cli/*.pyc
 
 # Local Databases & Environmental configs
 *.db
+*.db-shm
+*.db-wal
 *.sqlite3
 .env
 .env.development
@@ -27,6 +32,7 @@ lerna-debug.log*
 # Tests
 ingestion-server/coverage
 ingestion-server/.nyc_output
+training-cli/.pytest_cache
 
 # IDEs and editors
 /.idea
