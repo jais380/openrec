@@ -1,5 +1,8 @@
 import typer
 from openrec_cli_package.db import init_db
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = typer.Typer(help="openrec training CLI")
 
