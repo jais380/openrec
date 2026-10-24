@@ -37,4 +37,12 @@ def get_connection(db_path: str | Path) -> sqlite3.Connection:
 
 def init_db(db_path: str | Path) -> None:
     with get_connection(db_path) as conn:
-        conn.executescript(SCHEMA)
+        try:
+            conn.executescript(SCHEMA)
+        finally:
+            conn.close()
+
+def openrec_db(db_path: str) -> sqlite3.Connection:
+    conn = get_connection(db_path)
+    conn.executescript(SCHEMA)
+    return conn
