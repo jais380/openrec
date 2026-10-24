@@ -12,15 +12,20 @@ app = typer.Typer(help="openrec training CLI")
 def sync(
     project_id: str = typer.Option(..., help="Project to sync"),
     server_url: str = typer.Option("http://127.0.0.1:4002", envvar="OPENREC_SERVER_URL"),
-    db_path: str = typer.Option("openrec.db", envvar = "OPENREC_DB_PATH")
+    db_path: str = typer.Option("openrec.db", envvar="OPENREC_DB_PATH"),
+    limit: int = typer.Option(500, envvar="OPENREC_SYNC_LIMIT")
 ):
+    if limit > 500:
+        typer.echo(f"{limit} limit is too large, adjusting to {500}...")
+        limit = 500
 
     with openrec_db(db_path) as conn:
         """Pull new interaction events from the ingestion server"""
         typer.echo(f"Syncing project {project_id} from {server_url}...")
         try:
             client = get_client(server_url)
-            result = run_sync(conn, client, project_id, server_url)
+            print(client)
+            result = run_sync(conn, client, project_id, limit)
             return result
         finally:
             conn.close()
