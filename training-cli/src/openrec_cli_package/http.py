@@ -14,12 +14,11 @@ def create_or_update_env(key: str, secret: str) -> None:
 def get_client(base_url: str) -> str:
     fetched_token = get_token(base_url)
 
-    with httpx.Client(
+    return httpx.Client(
         base_url=base_url,
         headers= { "Authorization": f"Bearer {fetched_token}" },
         timeout=timeout
-    ) as client:
-        return client
+    )
 
 def get_token(base_url: str) -> str:
     with httpx.Client(

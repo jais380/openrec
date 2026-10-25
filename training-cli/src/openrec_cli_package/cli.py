@@ -22,13 +22,11 @@ def sync(
     with openrec_db(db_path) as conn:
         """Pull new interaction events from the ingestion server"""
         typer.echo(f"Syncing project {project_id} from {server_url}...")
-        try:
-            client = get_client(server_url)
-            print(client)
-            result = run_sync(conn, client, project_id, limit)
-            return result
-        finally:
-            conn.close()
+
+        client = get_client(server_url)
+        print(client)
+        result = run_sync(conn, client, project_id, limit)
+        return result
 
 @app.command()
 def train(
