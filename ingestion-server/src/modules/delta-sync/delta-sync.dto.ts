@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import z from "zod";
 
 export const deltaSyncSchema = z.object({
-    modifiedSince: z.coerce.date(),
+    modifiedSince: z.coerce.date().optional(),
     projectId: z.uuid().trim(),
     limit: z.coerce.number().optional(),
 });
@@ -11,12 +11,12 @@ type DeltaSyncType = z.infer<typeof deltaSyncSchema>;
 
 export class DeltaSyncDTO implements DeltaSyncType {
     @ApiProperty({
-        required: true,
+        required: false,
         type: () => Date,
         description: 'Time of the last sync',
         example: '2026-05-10T00:00:00.000Z'
     })
-    modifiedSince!: Date;
+    modifiedSince?: Date;
 
     @ApiProperty({
         required: true,

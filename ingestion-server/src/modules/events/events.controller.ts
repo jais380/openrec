@@ -7,7 +7,7 @@ import { JwtAuthGuard } from "../../utils/jwt-auth.guard";
 
 @ApiTags('Interaction Event')
 @Controller('api/events')
-@UseGuards(JwtAuthGuard)
+//@UseGuards(JwtAuthGuard)
 export class InteractionEventController {
     constructor(
         private readonly eventService: InteractionEventService
@@ -21,7 +21,7 @@ export class InteractionEventController {
     })
     @ApiOkResponse({
         description: 'Event Created successfully',
-        type: () => [InteractionEventResponse]
+        type: [InteractionEventResponse]
     })
     @ApiBadRequestResponse({
         description: 'Bad Request'

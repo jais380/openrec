@@ -22,7 +22,7 @@ export class DeltaSyncController {
     })
     @ApiOkResponse({
         description: 'Modified Events Fetched successfully',
-        type: () => [InteractionEventResponse]
+        type: [InteractionEventResponse]
     })
     async deltaSync(@Query() dto: DeltaSyncDTO) {
         return await this.syncService.deltaSync(dto);

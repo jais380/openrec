@@ -12,12 +12,16 @@ export class DeltaSyncService {
     ) {}
 
     async deltaSync(dto: DeltaSyncDTO) {
-        const { projectId, modifiedSince, limit = 5000 } = dto;
-        const items = await this.eventRepo.createQueryBuilder('event')
+        const { projectId, modifiedSince, limit = 500 } = dto;
+        const queryBuilder = this.eventRepo.createQueryBuilder('event')
                         .withDeleted()
                         .where('event.projectId = :projectId', { projectId })
-                        .andWhere('event.modifiedAt > :modifiedSince', { modifiedSince })
-                        .orderBy('event.modifiedAt', 'ASC')
+
+        if(modifiedSince) {
+            queryBuilder.andWhere('event.modifiedAt > :modifiedSince', { modifiedSince })
+        }
+
+        const items = await queryBuilder.orderBy('event.modifiedAt', 'ASC')
                         .addOrderBy('event.id', 'ASC')
                         .take(limit)
                         .getMany();
@@ -27,6 +31,7 @@ export class DeltaSyncService {
             data: items,
             count: items.length,
             nextCursor: items.length > 0 ? items[items.length - 1].modifiedAt : null,
+            hasNextPage: items.length < limit ? false : true
         }
     }
 }
