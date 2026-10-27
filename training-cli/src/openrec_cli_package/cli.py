@@ -23,10 +23,13 @@ def sync(
         """Pull new interaction events from the ingestion server"""
         typer.echo(f"Syncing project {project_id} from {server_url}...")
 
-        client = get_client(server_url)
-        print(client)
-        result = run_sync(conn, client, project_id, limit)
-        return result
+        try:
+            client = get_client(server_url)
+            result = run_sync(conn, client, project_id, limit)
+            typer.echo(f"Sync Completed :)")
+            return result
+        finally:
+            raise typer.Exit(code=1)
 
 @app.command()
 def train(

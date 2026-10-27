@@ -22,23 +22,33 @@ def get_cursor(conn: sqlite3.Connection, project_id: str) -> str | None:
     return cursor
 
 def run_sync(conn: sqlite3.Connection, client: httpx.Client, project_id: str, limit: int):
-    cursor = get_cursor(conn, project_id)
-    print(cursor)
-    resp = fetch_page(client, project_id, cursor, limit)
-    events = resp["data"]
-    next_cursor = resp["next_cursor"]
-    count = resp["count"]
-    has_next_page = resp["has_next_page"]
+    has_next_page = True
+    new_limit = limit
 
-    if len(events) > 0:
-        updated_event_count = store_page(conn, project_id, events, next_cursor, count, has_next_page)
+    while has_next_page is True:
+        cursor = get_cursor(conn, project_id)
+        previous_cursor = cursor
 
+        resp = fetch_page(client, project_id, cursor, new_limit)
+        events = resp["data"]
+        next_cursor = resp["next_cursor"]
+        count = resp["count"]
+        has_next_page = resp["has_next_page"]
+
+        new_cursor = next_cursor
+
+        if len(events) > 0:
+            idMatchCount = store_page(conn, project_id, events, next_cursor, count)
+
+            if previous_cursor is not None:
+                if has_next_page is True and idMatchCount == new_limit and previous_cursor[0] == new_cursor:
+                    new_limit = new_limit + 100
 
 def fetch_page(client: httpx.Client, project_id: str, cursor: str | None, limit: int) -> dict:
     params = { "projectId": project_id }
     if cursor is not None:
         params["modifiedSince"] = cursor
-    elif limit is not None:
+    if limit is not None:
         params["limit"] = limit
 
     resp = client.request("GET", "/api/sync/delta", params=params)
@@ -48,7 +58,7 @@ def fetch_page(client: httpx.Client, project_id: str, cursor: str | None, limit:
 
     return { "data": result["data"], "count": result["count"], "next_cursor": result["nextCursor"], "has_next_page": result["hasNextPage"] }
 
-def store_page(conn: sqlite3.Connection, project_id: str, events: list, next_cursor: str | None, count: int, has_next_page: bool) -> int:
+def store_page(conn: sqlite3.Connection, project_id: str, events: list, next_cursor: str | None, count: int) -> dict:
     with conn:
         rows = []
 
@@ -60,8 +70,6 @@ def store_page(conn: sqlite3.Connection, project_id: str, events: list, next_cur
             interaction_value = e["interactionValue"]
             timestamp = e["createdAt"]
 
-            print(e["projectId"], project_id)
-
             if project_id != e["projectId"]:
                 print("Project_id mismatch, ending sync...")
                 raise ValueError
@@ -69,21 +77,18 @@ def store_page(conn: sqlite3.Connection, project_id: str, events: list, next_cur
             event = (id, project_id, user_id, item_id, event_type, interaction_value, timestamp)
             rows.append(event)
 
-        before_write = conn.total_changes
-        print(f"Changes made before write - {before_write}")
-
         conn.executemany(UPSERT_EVENT, rows)
 
-        after_write = conn.total_changes
-        print(f"Changes made after write - {after_write}")
-
+        ids = [r[0] for r in rows]
+        marks = ",".join("?" * len(ids))
+        found = conn.execute(
+            f"SELECT COUNT(*) FROM interactions WHERE id IN ({marks})", ids
+        ).fetchone()[0]
+        if found != len(set(ids)):
+            raise ValueError("page not fully stored")
 
         if next_cursor is not None:
             last_sync_timestamp = next_cursor
             conn.execute(UPSERT_CURSOR, (project_id, last_sync_timestamp))
 
-        if after_write < count:
-            new_event_count = after_write
-            repeated_event_count = count - after_write
-
-            print(new_event_count, repeated_event_count)
+        return found
