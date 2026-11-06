@@ -1,5 +1,6 @@
 import sqlite3
 import httpx
+from openrec_cli_package.http import request_with_retry
 
 FETCH_CURSOR = """
     SELECT last_sync_timestamp FROM sync_state WHERE project_id = ?;
@@ -19,6 +20,7 @@ UPSERT_CURSOR = """
 
 def get_cursor(conn: sqlite3.Connection, project_id: str) -> str | None:
     cursor = conn.execute(FETCH_CURSOR, (project_id,)).fetchone()
+    print(cursor)
     return cursor
 
 def run_sync(conn: sqlite3.Connection, client: httpx.Client, project_id: str, limit: int):
@@ -42,16 +44,18 @@ def run_sync(conn: sqlite3.Connection, client: httpx.Client, project_id: str, li
 
             if previous_cursor is not None:
                 if has_next_page is True and idMatchCount == new_limit and previous_cursor[0] == new_cursor:
-                    new_limit = new_limit + 100
+                    new_limit = new_limit + 1
 
 def fetch_page(client: httpx.Client, project_id: str, cursor: str | None, limit: int) -> dict:
     params = { "projectId": project_id }
     if cursor is not None:
-        params["modifiedSince"] = cursor
+        params["modifiedSince"] = cursor[0]
     if limit is not None:
         params["limit"] = limit
 
-    resp = client.request("GET", "/api/sync/delta", params=params)
+    print(params)
+
+    resp = request_with_retry(client, "GET", "/api/sync/delta", params=params)
 
     resp.raise_for_status()
     result = resp.json()
